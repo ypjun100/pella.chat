@@ -1,93 +1,28 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="kr">
 <head>
     <meta charset="UTF-8">
-    <title>Simple Chat</title>
+    <title>Pella Topics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/index.css"/>
     <script>
-        var wsUrl = "ws://localhost:8080/ws/chat";
-        var output;
-
-        function init() {
-            output = document.getElementById("output");
-        }
-
-        function openSocket() {
-            websocket = new WebSocket(wsUrl);
-            websocket.onopen = (e) => onOpen(e);
-            websocket.onclose = (e) => onClose(e);
-            websocket.onmessage = (e) => onMessage(e);
-            websocket.onerror = (e) => onError(e);
-        }
-
-        function onOpen(e) {
-            writeToScreen("연결 완료!");
-            doSend(JSON.stringify({
-                type: "ENTER",
-                roomId: document.getElementsByName("room_id")[0].value,
-                sender: document.getElementsByName("user_name")[0].value,
-                message: ""
-            }));
-        }
-
-        function onClose(e) {
-            writeToScreen("연결 해제");
-        }
-
-        function onMessage(e) {
-            writeToScreen("<span style='color: blue;'>수신: " + e.data + "</span>");
-        }
-
-        function onError(e) {
-            writeToScreen("<span style='color: red;'>에러: " + evt.data + "</span>");
-        }
-
-        function doSend(message) {
-            writeToScreen("발신: " + message);
-            websocket.send(message);
-        }
-
-        function writeToScreen(message) {
-            var pre = document.createElement("p");
-            pre.innerHTML = message;
-            output.appendChild(pre);
-        }
-
-        window.addEventListener("load", init, false);
-
-        function createRoom() {
-            fetch("http://localhost:8080/chat?name=" + document.getElementsByName("room_name")[0].value, { method: "POST", body: JSON.stringify({name: "test"}) })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementsByName("room_id")[0].value = data.roomId;
-                    writeToScreen("채팅방이 생성되었습니다. 채팅방 ID: " + data.roomId);
-                });
-        }
-
-        function sendMessage() {
-            doSend(JSON.stringify({
-                type: "TALK",
-                roomId: document.getElementsByName("room_id")[0].value,
-                sender: document.getElementsByName("user_name")[0].value,
-                message: document.getElementsByName("chat")[0].value
-            }));
+        function join(topicNum) {
+            console.log(topicNum);
         }
     </script>
 </head>
 <body>
-    <div>
-        <input name="room_name" type="text" placeholder="채팅방 이름 입력"/>
-        <button onclick="createRoom()">채팅 방 만들기</button>
+    <div class="container">
+        <h2 class="title">주제 선택</h2>
+        <p class="sub-title">아래 주제 중 하나를 선택해주세요.</p>
+        <div class="topics">
+            <button onclick="join(1)">상속세를 없애야 하는가?</button><br>
+            <button onclick="join(2)">대중교통의 노약자석을 늘려야 하는가?</button><br>
+            <button onclick="join(3)">자살은 정당화 할 수 있는가?</button><br>
+            <button onclick="join(4)">청소년에게 감형 처벌을 해야하는가?</button><br>
+            <button onclick="join(5)">인간은 태어날 때부터 선한가?</button><br>
+            <button onclick="join(6)">사형제도를 폐지해야 하는가?</button>
+        </div>
     </div>
-    <input name="user_name" type="text" placeholder="유저명"/>
-    <div>
-        <input name="room_id" type="text" placeholder="채팅방 ID"/>
-        <button onclick="openSocket()">채팅 방 접속</button>
-    </div>
-    <div>
-        <input name="chat" type="text" placeholder="내용"/>
-        <button onclick="sendMessage()">전송</button>
-    </div>
-    <h2>WebSocket test</h2>
-    <div id="output"></div>
 </body>
 </html>
