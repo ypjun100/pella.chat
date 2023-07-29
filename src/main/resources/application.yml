@@ -1,22 +1,23 @@
 server.servlet.encoding.force-response: true
 
 application:
+  number_of_topics: 7 # 토픽의 수 보다 하나가 더 많아야 함 (0은 에러감지용)
   topics:
     -
-      id: 0
+      id: 1
       topic: 상속세를 없애야 하는가?
     -
-      id: 1
+      id: 2
       topic: 대중교통의 노약자석을 늘려야 하는가?
     -
-      id: 2
+      id: 3
       topic: 자살은 정당화 할 수 있는가?
     -
-      id: 3
+      id: 4
       topic: 청소년에게 감형 처벌을 해야하는가?
     -
-      id: 4
+      id: 5
       topic: 인간은 태어날 때부터 선한가?
     -
-      id: 5
+      id: 6
       topic: 사형제도를 폐지해야 하는가?

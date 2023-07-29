@@ -1,6 +1,7 @@
 package com.acapella.pella.chat.service;
 
-import com.acapella.pella.chat.dto.ChatRoom;
+import com.acapella.pella.chat.dto.RequestPacket;
+import com.acapella.pella.chat.dto.WaitingRoom;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -10,37 +11,29 @@ import org.springframework.web.socket.WebSocketSession;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.*;
+import java.util.UUID;
 
 @Slf4j
 @Data
 @Service
-public class ChatService {
+public class WaitingRoomService {
     private final ObjectMapper mapper;
-    private Map<String, ChatRoom> chatRooms;
+    private static WaitingRoom waitingRoom;
+
+    public static String getWaitingRoomId() { return waitingRoom.getId(); }
 
     @PostConstruct
     private void init() {
-        chatRooms = new LinkedHashMap<>();
+        waitingRoom = new WaitingRoom(UUID.randomUUID().toString());
     }
 
-    public List<ChatRoom> findAllRoom() {
-        return new ArrayList<>(chatRooms.values());
-    }
+    public void handleAction(WebSocketSession session, RequestPacket requestPacket) {
+        if (requestPacket.getRoomId() != requestPacket.getRoomId())
+            return;
 
-    public ChatRoom findRoomById(String roomId) {
-        return chatRooms.get(roomId);
-    }
-
-    public ChatRoom createRoom(String name) {
-        String roomId = UUID.randomUUID().toString();
-
-        ChatRoom room = ChatRoom.builder()
-                .roomId(roomId)
-                .build();
-
-        chatRooms.put(roomId, room);
-        return room;
+        if (requestPacket.getType() == RequestPacket.MessageType.JOIN) {
+            waitingRoom.addSession(session);
+        }
     }
 
     public <T> void sendMessage(WebSocketSession session, T message) {

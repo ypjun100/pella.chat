@@ -1,6 +1,6 @@
 package com.acapella.pella.chat.dto;
 
-import com.acapella.pella.chat.service.ChatService;
+import com.acapella.pella.chat.service.WaitingRoomService;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.web.socket.WebSocketSession;
@@ -12,9 +12,16 @@ public class WaitingRoom extends Room {
         this.id = id;
     }
 
-    public void handleAction(WebSocketSession session, Chat message, ChatService service) {
-        if (message.getType().equals(Chat.MessageType.JOIN)) {
+    public void addSession(WebSocketSession session) {
+        sessions.add(session);
+        System.out.println(sessions);
+    }
+
+    public void handleAction(WebSocketSession session, RequestPacket message, WaitingRoomService service) {
+        if (message.getType().equals(RequestPacket.MessageType.JOIN)) {
             sessions.add(session);
+            message.setMessage("OK");
+            service.sendMessage(session, message);
         }
     }
 }

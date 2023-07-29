@@ -15,12 +15,12 @@ public class TopicRoom extends Room {
         this.topicNumber = topicNumber;
     }
 
-    public void handleAction(WebSocketSession session, Chat message, ChatService service) {
-        if (message.getType().equals(Chat.MessageType.ENTER)) {
+    public void handleAction(WebSocketSession session, RequestPacket message, ChatService service) {
+        if (message.getType().equals(RequestPacket.MessageType.ENTER)) {
             sessions.add(session);
             message.setMessage(message.getSender() + " 님이 입장하셨습니다.");
             sendMessage(message, service);
-        } else if (message.getType().equals(Chat.MessageType.TALK)) {
+        } else if (message.getType().equals(RequestPacket.MessageType.TALK)) {
             message.setMessage(message.getMessage());
             sendMessage(message, service);
         }

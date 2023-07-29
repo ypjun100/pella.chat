@@ -1,93 +1,46 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="kr">
 <head>
     <meta charset="UTF-8">
-    <title>Simple Chat</title>
+    <title>Pella</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/index.css"/>
     <script>
-        var wsUrl = "ws://localhost:8080/ws/chat";
-        var output;
-
-        function init() {
-            output = document.getElementById("output");
+        window.onload = function() {
+            websocket = new WebSocket("ws://" + window.location.host + "/ws");
+            websocket.onopen = (e) => onSocketOpen(e);
+            websocket.onclose = (e) => onSocketClose(e);
+            websocket.onmessage = (e) => onSocketMessage(e);
+            websocket.onerror = (e) => onSocketError(e);
         }
 
-        function openSocket() {
-            websocket = new WebSocket(wsUrl);
-            websocket.onopen = (e) => onOpen(e);
-            websocket.onclose = (e) => onClose(e);
-            websocket.onmessage = (e) => onMessage(e);
-            websocket.onerror = (e) => onError(e);
-        }
-
-        function onOpen(e) {
-            writeToScreen("연결 완료!");
-            doSend(JSON.stringify({
+        function onSocketOpen(e) {
+            websocket.send(JSON.stringify({
                 type: "ENTER",
-                roomId: document.getElementsByName("room_id")[0].value,
-                sender: document.getElementsByName("user_name")[0].value,
-                message: ""
+                roomId: sessionStorage.getItem("room_id"),
+                topicId: sessionStorage.getItem("topic_id")
             }));
         }
 
-        function onClose(e) {
-            writeToScreen("연결 해제");
+        function onSocketClose(e) {
+            alert("서버와 통신을 할 수 없습니다. 처음부터 다시 시도해 주세요.");
+            window.location.href = "/";
         }
 
-        function onMessage(e) {
-            writeToScreen("<span style='color: blue;'>수신: " + e.data + "</span>");
+        function onSocketMessage(e) {
+            let message = JSON.parse(e.data);
+            console.log(message);
         }
 
-        function onError(e) {
-            writeToScreen("<span style='color: red;'>에러: " + evt.data + "</span>");
-        }
-
-        function doSend(message) {
-            writeToScreen("발신: " + message);
-            websocket.send(message);
-        }
-
-        function writeToScreen(message) {
-            var pre = document.createElement("p");
-            pre.innerHTML = message;
-            output.appendChild(pre);
-        }
-
-        window.addEventListener("load", init, false);
-
-        function createRoom() {
-            fetch("http://localhost:8080/chat?name=" + document.getElementsByName("room_name")[0].value, { method: "POST", body: JSON.stringify({name: "test"}) })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementsByName("room_id")[0].value = data.roomId;
-                    writeToScreen("채팅방이 생성되었습니다. 채팅방 ID: " + data.roomId);
-                });
-        }
-
-        function sendMessage() {
-            doSend(JSON.stringify({
-                type: "TALK",
-                roomId: document.getElementsByName("room_id")[0].value,
-                sender: document.getElementsByName("user_name")[0].value,
-                message: document.getElementsByName("chat")[0].value
-            }));
+        function onSocketError(e) {
+            alert("서버와 통신을 할 수 없습니다. 처음부터 다시 시도해 주세요.");
+            window.location.href = "/";
         }
     </script>
 </head>
 <body>
-    <div>
-        <input name="room_name" type="text" placeholder="채팅방 이름 입력"/>
-        <button onclick="createRoom()">채팅 방 만들기</button>
+    <div class="container">
+        <a href="/" class="go-back">종료</a>
     </div>
-    <input name="user_name" type="text" placeholder="유저명"/>
-    <div>
-        <input name="room_id" type="text" placeholder="채팅방 ID"/>
-        <button onclick="openSocket()">채팅 방 접속</button>
-    </div>
-    <div>
-        <input name="chat" type="text" placeholder="내용"/>
-        <button onclick="sendMessage()">전송</button>
-    </div>
-    <h2>WebSocket test</h2>
-    <div id="output"></div>
 </body>
 </html>

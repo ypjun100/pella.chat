@@ -2,7 +2,7 @@
 <html lang="kr">
 <head>
     <meta charset="UTF-8">
-    <title>Pella Topics</title>
+    <title>Pella</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/index.css"/>
     <script>
@@ -20,8 +20,9 @@
                 });
         }
 
-        function join(topicNum) {
-            console.log(topicNum);
+        function join(topicId) {
+            sessionStorage.setItem("topic_id", topicId);
+            window.location.href = "/waiting";
         }
     </script>
 </head>
