@@ -28,6 +28,8 @@ public class WWebSocketChatHandler extends TextWebSocketHandler {
             service.join(session, requestPacket);
         } else if (requestPacket.getType() == RequestPacket.MessageType.ENTER) {
             service.enter(session, requestPacket);
+        } else if (requestPacket.getType() == RequestPacket.MessageType.TALK) {
+            service.talk(session, requestPacket);
         }
     }
 

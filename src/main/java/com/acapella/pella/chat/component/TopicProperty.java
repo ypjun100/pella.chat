@@ -14,4 +14,8 @@ public class TopicProperty {
     @Getter
     @Setter
     private List<Topic> topics;
+
+    public Topic getTopic(int topicId) {
+        return topics.get(topicId - 1);
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.web.socket.WebSocketSession;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 
 @Data
@@ -37,6 +38,7 @@ public class ChatRoom {
                         .roomId(this.roomId)
                         .topicId(this.topicId)
                         .message("님이 입장하셨습니다.")
+                        .sender(UUID.randomUUID().toString())
                         .build();
         service.sendMessage(session, message);
     }

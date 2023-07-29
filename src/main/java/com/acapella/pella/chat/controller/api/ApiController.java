@@ -4,10 +4,7 @@ import com.acapella.pella.chat.component.TopicProperty;
 import com.acapella.pella.chat.dto.Topic;
 import com.acapella.pella.chat.service.WaitingRoomService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +18,9 @@ public class ApiController {
     public List<Topic> getTopics() {
         return topicProperty.getTopics();
     }
+
+    @GetMapping("/topic/{topicId}")
+    public Topic getTopic(@PathVariable int topicId) { return topicProperty.getTopic(topicId); }
 
     @GetMapping("/enter-waiting")
     public String enterWaiting() {

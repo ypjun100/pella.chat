@@ -40,17 +40,14 @@ public class WChatService {
 
     public void join(WebSocketSession session, RequestPacket requestPacket) {
         int topicId = requestPacket.getTopicId();
-        if (!waitingRooms.get(topicId).isEmpty()) { // 해당 토픽의 대기방에 인원이 있는경우
-            // 세션이 연결된 사용자를 찾음
-            WebSocketSession existingSession = waitingRooms.get(topicId).get(0); // 임시로 유저 한 명을 넣음
-            for (int i = 0; i < waitingRooms.get(topicId).size(); i++) {
-                if (waitingRooms.get(topicId).get(0).isOpen()) {
-                    existingSession = waitingRooms.get(topicId).pop();
-                    break;
-                }
-                waitingRooms.get(topicId).pop();
-            }
+        // 세션이 끊긴 사용자의 세션 삭제
+        for (int i = 0; i < waitingRooms.get(topicId).size(); i++) {
+            if (waitingRooms.get(topicId).get(0).isOpen())
+                break;
+            waitingRooms.get(topicId).pop();
+        }
 
+        if (!waitingRooms.get(topicId).isEmpty()) { // 해당 토픽의 대기방에 인원이 있는경우
             String chatRoomId = UUID.randomUUID().toString();
             ChatRoom room = ChatRoom.builder()
                     .roomId(chatRoomId)
@@ -62,7 +59,7 @@ public class WChatService {
                     .topicId(topicId)
                     .build();
             sendMessage(session, message);
-            sendMessage(existingSession, message);
+            sendMessage(waitingRooms.get(topicId).pop(), message);
 
             chatRooms.get(topicId).put(chatRoomId, room); // 채팅방 생성
         } else { // 인원이 없는 경우
@@ -76,6 +73,22 @@ public class WChatService {
 
         if (chatRooms.get(topicId).containsKey(roomId)) {
             chatRooms.get(topicId).get(roomId).addSession(session, this);
+        }
+    }
+
+    public void talk(WebSocketSession session, RequestPacket requestPacket) {
+        int topicId = requestPacket.getTopicId();
+        String roomId = requestPacket.getRoomId();
+
+        if (chatRooms.get(topicId).containsKey(roomId)) {
+            ResponsePacket message = ResponsePacket.builder()
+                    .type(ResponsePacket.MessageType.TALK)
+                    .roomId(roomId)
+                    .topicId(topicId)
+                    .message(requestPacket.getMessage())
+                    .sender(requestPacket.getSender())
+                    .build();
+            chatRooms.get(topicId).get(roomId).sendMessage(message, this);
         }
     }
 
