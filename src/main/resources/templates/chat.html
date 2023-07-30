@@ -10,12 +10,6 @@
         let topicId = sessionStorage.getItem("topic_id");
 
         window.onload = function() {
-            fetch("/api/topic/" + topicId, { method: "GET" })
-                .then(response => response.json())
-                .then(data => {
-                    //document.getElementsByClassName("title")[0].innerHTML = data.topic;
-                });
-
             websocket = new WebSocket("ws://" + window.location.host + "/ws");
             websocket.onopen = (e) => onSocketOpen(e);
             websocket.onclose = (e) => onSocketClose(e);

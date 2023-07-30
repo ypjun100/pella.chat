@@ -13,6 +13,10 @@ import java.util.List;
 public class TopicProperty {
     @Getter
     @Setter
+    private int numberOfTopics;
+
+    @Getter
+    @Setter
     private List<Topic> topics;
 
     public Topic getTopic(int topicId) {

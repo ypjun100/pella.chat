@@ -4,6 +4,6 @@ import lombok.*;
 
 @Data
 public class Topic {
-    private int id;
-    private String topic;
+    private int id;         // 토픽 ID
+    private String topic;   // 토픽명
 }
